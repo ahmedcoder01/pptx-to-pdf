@@ -1,0 +1,14 @@
+src/
+tests/
+scripts/
+*.ts
+!dist/**/*.d.ts
+tsconfig.json
+vitest.config.ts
+convert-file.ts
+convert-single.ts
+diagnose.ts
+.gitignore
+.DS_Store
+*.pptx
+*.pdf
