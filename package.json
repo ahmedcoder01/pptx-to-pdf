@@ -1,6 +1,6 @@
 {
   "name": "pptx-to-pdf",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Pure TypeScript PPTX-to-PDF converter — no LibreOffice, no native binaries",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

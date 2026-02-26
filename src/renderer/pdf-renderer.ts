@@ -9,6 +9,7 @@ import { renderImage } from './image-renderer';
 import { renderTable } from './table-renderer';
 import { renderGroup } from './group-renderer';
 import { renderConnector } from './connector-renderer';
+import { getBundledFont } from '../utils/font-utils';
 
 export interface RenderOptions {
   slides?: number[];
@@ -49,6 +50,11 @@ export async function renderPdf(
       bufferPages: true,
       margin: 0,
     });
+
+    // Register bundled font as default to avoid PDFKit looking for Helvetica.afm
+    const defaultFont = getBundledFont('Arial', false, false);
+    doc.registerFont('default', defaultFont);
+    doc.font('default');
 
     doc.on('data', (chunk: Buffer) => chunks.push(chunk));
     doc.on('end', () => resolve(Buffer.concat(chunks)));
