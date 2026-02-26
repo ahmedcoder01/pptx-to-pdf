@@ -9,7 +9,7 @@ import { renderImage } from './image-renderer';
 import { renderTable } from './table-renderer';
 import { renderGroup } from './group-renderer';
 import { renderConnector } from './connector-renderer';
-import { getBundledFont } from '../utils/font-utils';
+import { LIBERATION_SANS_REGULAR } from '../fonts/liberation-sans-regular';
 
 export interface RenderOptions {
   slides?: number[];
@@ -44,17 +44,18 @@ export async function renderPdf(
   return new Promise<Buffer>((resolve, reject) => {
     const chunks: Buffer[] = [];
 
+    // Pass font: null to prevent PDFKit from loading Helvetica.afm (fails in bundled environments)
     const doc = new PDFDocument({
       size: [pageWidth, pageHeight],
       autoFirstPage: false,
       bufferPages: true,
       margin: 0,
-    });
+      font: null,
+    } as any);
 
-    // Register bundled font as default to avoid PDFKit looking for Helvetica.afm
-    const defaultFont = getBundledFont('Arial', false, false);
-    doc.registerFont('default', defaultFont);
-    doc.font('default');
+    // Register embedded Liberation Sans as the default font
+    doc.registerFont('LiberationSans', LIBERATION_SANS_REGULAR);
+    doc.font('LiberationSans');
 
     doc.on('data', (chunk: Buffer) => chunks.push(chunk));
     doc.on('end', () => resolve(Buffer.concat(chunks)));

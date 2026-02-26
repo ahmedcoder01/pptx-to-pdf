@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import { LIBERATION_SANS_REGULAR } from '../fonts/liberation-sans-regular';
 
 const FONTS_DIR = path.join(__dirname, '..', '..', 'fonts');
 
@@ -109,13 +110,19 @@ function findFontInDir(dir: string, family: string, bold: boolean, italic: boole
   return undefined;
 }
 
-export function getBundledFont(family: string, bold: boolean = false, italic: boolean = false): string {
+export function getBundledFont(family: string, bold: boolean = false, italic: boolean = false): string | Buffer {
   const normalized = family.toLowerCase().trim();
   const libFamily = FONT_FALLBACK_MAP[normalized] || 'LiberationSans';
   const variants = LIBERATION_VARIANTS[libFamily] || LIBERATION_VARIANTS.LiberationSans;
 
   const variant = bold && italic ? 'boldItalic' : bold ? 'bold' : italic ? 'italic' : 'regular';
-  return path.join(FONTS_DIR, variants[variant]);
+  const fontPath = path.join(FONTS_DIR, variants[variant]);
+
+  // If the font file exists on disk, return the path (normal install)
+  if (fs.existsSync(fontPath)) return fontPath;
+
+  // In bundled environments, font files may not exist on disk — fall back to embedded font
+  return LIBERATION_SANS_REGULAR;
 }
 
 function getSystemFontDirs(): string[] {
